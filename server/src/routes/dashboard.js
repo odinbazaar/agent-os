@@ -3,6 +3,7 @@ import { getAgentStats } from '../agents/manager.js';
 import { getSeoSummary } from '../seo/tracker.js';
 import { query } from '../db/database.js';
 import { getMcpToolDefinitions } from '../mcp/server.js';
+import { llmInfo } from '../llm/client.js';
 
 const router = Router();
 
@@ -21,6 +22,7 @@ router.get('/', (req, res) => {
       seo: seoSummary,
       activity: recentActivity,
       mcpTools: mcpTools.length,
+      llm: llmInfo(),
       system: {
         version: '1.0.0',
         uptime: process.uptime(),

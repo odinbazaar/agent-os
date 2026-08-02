@@ -4,15 +4,18 @@ import { escapeHtml } from '../components/ui.js';
 export async function renderSettings(container) {
   let tailscaleStatus = {};
   let devices = [];
+  let llm = { provider: 'NVIDIA NIM', model: '—', configured: false };
 
   try {
-    const [statusRes, devicesRes] = await Promise.all([
+    const [statusRes, devicesRes, dashRes] = await Promise.all([
       api.getTailscaleStatus(),
       api.getTailscaleDevices(),
+      api.dashboard(),
     ]);
     tailscaleStatus = statusRes.data;
     const devData = devicesRes.data;
     devices = devData.devices || devData || [];
+    if (dashRes.data.llm) llm = dashRes.data.llm;
   } catch (e) {
     console.error('Failed to load settings:', e);
   }
@@ -106,6 +109,17 @@ export async function renderSettings(container) {
               <div class="settings-hint">Uzaktan cihaz yönetimi için kullanılır</div>
             </div>
             <span class="badge ${isMock ? 'badge-paused' : 'badge-active'}">${isMock ? 'Yapılandırılmadı' : 'Bağlı'}</span>
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">Dil Modeli — ${escapeHtml(llm.provider)}</div>
+              <div class="settings-hint">
+                ${llm.configured
+                  ? `Görevler <span class="text-mono">${escapeHtml(llm.model)}</span> ile çalıştırılıyor`
+                  : 'Anahtar yok — görevler simülasyon modunda çalışıyor'}
+              </div>
+            </div>
+            <span class="badge ${llm.configured ? 'badge-active' : 'badge-paused'}">${llm.configured ? 'Bağlı' : 'Yapılandırılmadı'}</span>
           </div>
           <div class="settings-row" style="border:none">
             <div>
