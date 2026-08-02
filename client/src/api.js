@@ -56,6 +56,10 @@ export const api = {
   getSeoSettings: () => request('/seo/settings'),
   setSeoTargetDomain: (targetDomain) => request('/seo/settings', { method: 'POST', body: { targetDomain } }),
 
+  // Video
+  generateVideoScript: (data) => request('/video/script', { method: 'POST', body: data }),
+  generateStoryboard: (taskId) => request(`/video/storyboard/${taskId}`, { method: 'POST' }),
+
   // Tailscale
   getTailscaleDevices: () => request('/tailscale/devices'),
   getTailscaleStatus: () => request('/tailscale/status'),

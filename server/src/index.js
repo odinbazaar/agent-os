@@ -15,6 +15,8 @@ import dashboardRoutes from './routes/dashboard.js';
 import workspaceRoutes from './routes/workspace.js';
 import seoRoutes from './seo/routes.js';
 import tailscaleRoutes from './tailscale/routes.js';
+import videoRoutes from './video/routes.js';
+import { MEDIA_DIR } from './llm/image.js';
 
 const app = express();
 const server = createServer(app);
@@ -50,6 +52,11 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/workspace', workspaceRoutes);
 app.use('/api/seo', seoRoutes);
 app.use('/api/tailscale', tailscaleRoutes);
+app.use('/api/video', videoRoutes);
+
+// Üretilen görseller. Yalnızca data/media servis ediliyor — data/ kökünde
+// SQLite dosyası da var, o dışarı açılmamalı.
+app.use('/media', express.static(MEDIA_DIR));
 
 // Health check
 app.get('/api/health', (req, res) => {

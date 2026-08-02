@@ -8,6 +8,9 @@ export async function renderVideoAgent(container) {
     tasks = res.data || [];
   } catch {}
 
+  // Görevler tarihe göre azalan geldiği için ilk senaryolu kayıt en yenisi.
+  const latest = findLatestScript(tasks);
+
   container.innerHTML = `
     <div class="animate-fade">
       <div class="flex items-center justify-between" style="margin-bottom:var(--space-lg)">
@@ -15,7 +18,7 @@ export async function renderVideoAgent(container) {
           <h1 class="page-title">Video Ajanı</h1>
           <p class="page-subtitle">Yapay zekâ destekli video üretimi · Higsfield için optimize</p>
         </div>
-        <button class="btn btn-primary" id="btn-new-video">🎬 Yeni Video Brifingi</button>
+        <button class="btn btn-primary" id="btn-new-video">🎬 Senaryo Üret</button>
       </div>
 
       <!-- 80/20 Rule Display -->
@@ -116,6 +119,11 @@ export async function renderVideoAgent(container) {
         </div>
       </div>
 
+      <!-- Senaryo & Storyboard -->
+      <div class="glass-card" style="margin-top:var(--space-lg);padding:var(--space-lg)" id="script-panel">
+        ${renderScriptPanel(latest)}
+      </div>
+
       <!-- Higsfield Warning -->
       <div class="security-warning" style="margin-top:var(--space-lg);background:var(--yellow-dim);border-color:rgba(255,171,0,0.2)">
         <span class="icon">⚠️</span>
@@ -153,7 +161,7 @@ export async function renderVideoAgent(container) {
       `,
       actions: [
         { label: 'İptal', value: null },
-        { label: 'Brifing Oluştur', class: 'btn-primary', value: 'create' },
+        { label: 'Senaryo Üret', class: 'btn-primary', value: 'create' },
       ],
     });
 
@@ -162,18 +170,131 @@ export async function renderVideoAgent(container) {
       const duration = document.getElementById('video-duration')?.value;
       const format = document.getElementById('video-format')?.value;
       if (!topic) return showToast('Konu zorunlu', 'error');
+
+      const panel = container.querySelector('#script-panel');
+      if (panel) panel.innerHTML = loadingBlock('Senaryo üretiliyor — model yanıtı bekleniyor...');
+
       try {
-        await api.createTask({
-          agentId: 'agent-video-001',
-          title: `Video: ${topic}`,
-          description: `Süre: ${duration} sn, Format: ${format === 'standard' ? 'standart' : 'kısa form'}`,
-          priority: 'normal',
-        });
-        showToast('Video brifingi oluşturuldu', 'success');
+        const res = await api.generateVideoScript({ topic, durationSec: Number(duration), format });
+        showToast(`Senaryo hazır — ${res.data.script.sahneler.length} sahne`, 'success');
         renderVideoAgent(container);
       } catch (e) {
         showToast(e.message, 'error');
+        renderVideoAgent(container);
       }
     }
   });
+
+  // Storyboard
+  container.querySelector('#btn-storyboard')?.addEventListener('click', async (e) => {
+    const taskId = e.currentTarget.dataset.taskId;
+    const panel = container.querySelector('#script-panel');
+    if (panel) panel.innerHTML = loadingBlock('Storyboard kareleri üretiliyor — kare başına ~4 sn...');
+
+    try {
+      const res = await api.generateStoryboard(taskId);
+      const { frames, failed } = res.data;
+      showToast(
+        failed ? `${frames.length - failed}/${frames.length} kare üretildi` : `${frames.length} kare üretildi`,
+        failed ? 'warning' : 'success'
+      );
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+    renderVideoAgent(container);
+  });
+}
+
+// ── Senaryo paneli ──
+
+function findLatestScript(tasks) {
+  for (const t of tasks) {
+    if (!t.result) continue;
+    try {
+      const parsed = JSON.parse(t.result);
+      if (parsed.script?.sahneler?.length) return { taskId: t.id, ...parsed };
+    } catch {}
+  }
+  return null;
+}
+
+function loadingBlock(message) {
+  return `
+    <div class="flex items-center gap-sm" style="padding:var(--space-lg);justify-content:center">
+      <div class="spinner"></div>
+      <span class="text-sm text-muted">${escapeHtml(message)}</span>
+    </div>
+  `;
+}
+
+function renderScriptPanel(latest) {
+  if (!latest) {
+    return `
+      <h3 class="section-title">Senaryo & Storyboard</h3>
+      <div class="empty-state" style="padding:var(--space-lg)">
+        <div class="icon">📝</div>
+        <p class="text-sm">Henüz senaryo yok. "Senaryo Üret" ile başlayın — model sahne sahne plan çıkarır,
+        ardından her sahne için storyboard karesi üretebilirsiniz.</p>
+      </div>
+    `;
+  }
+
+  const { script, taskId, model, storyboard } = latest;
+  const frames = storyboard?.frames || [];
+  const frameByNo = new Map(frames.map(f => [String(f.no), f]));
+
+  return `
+    <div class="flex items-center justify-between" style="margin-bottom:var(--space-md)">
+      <h3 class="section-title" style="margin:0">${escapeHtml(script.baslik) || 'Senaryo'}</h3>
+      <div class="flex items-center gap-sm">
+        <span class="text-sm text-muted text-mono">${escapeHtml(model || '')}</span>
+        <button class="btn btn-sm btn-primary" id="btn-storyboard" data-task-id="${escapeHtml(taskId)}">
+          🖼️ ${frames.length ? 'Storyboard\'u Yenile' : 'Storyboard Üret'}
+        </button>
+      </div>
+    </div>
+
+    ${script.hook ? `
+      <div class="settings-row" style="border:none;padding-top:0">
+        <div>
+          <div class="settings-label">Hook</div>
+          <div class="settings-hint">${escapeHtml(script.hook)}</div>
+        </div>
+      </div>
+    ` : ''}
+
+    <div style="display:flex;flex-direction:column;gap:var(--space-md);margin-top:var(--space-md)">
+      ${script.sahneler.map((s, i) => {
+        const frame = frameByNo.get(String(s.no ?? i + 1));
+        return `
+          <div class="flex gap-md" style="align-items:flex-start">
+            <div style="flex:0 0 200px">
+              ${frame?.url
+                ? `<img src="${escapeHtml(frame.url)}" alt="Sahne ${escapeHtml(s.no ?? i + 1)}"
+                     style="width:200px;border-radius:var(--radius-md);display:block" loading="lazy" />`
+                : `<div style="width:200px;aspect-ratio:16/10;border-radius:var(--radius-md);background:var(--bg-hover);
+                     display:flex;align-items:center;justify-content:center;font-size:1.5rem"
+                     title="${frame?.error ? escapeHtml(frame.error) : 'Kare üretilmedi'}">${frame?.error ? '⚠️' : '🎞️'}</div>`}
+            </div>
+            <div style="flex:1">
+              <div class="flex items-center gap-sm" style="margin-bottom:4px">
+                <span class="badge badge-working">${escapeHtml(s.zaman) || `Sahne ${i + 1}`}</span>
+              </div>
+              <p class="text-sm" style="margin-bottom:4px"><strong>${escapeHtml(s.anlatim)}</strong></p>
+              <p class="text-sm text-muted">${escapeHtml(s.gorsel_tarif)}</p>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    ${script.cta ? `
+      <div class="settings-row" style="border:none;margin-top:var(--space-md)">
+        <div>
+          <div class="settings-label">Kapanış (CTA)</div>
+          <div class="settings-hint">${escapeHtml(script.cta)}</div>
+        </div>
+      </div>
+    ` : ''}
+  `;
 }

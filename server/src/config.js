@@ -20,6 +20,7 @@ export const config = {
     apiKey: process.env.NVIDIA_API_KEY || '',
     model: process.env.NVIDIA_MODEL || 'meta/llama-3.3-70b-instruct',
     baseUrl: process.env.NVIDIA_BASE_URL || 'https://integrate.api.nvidia.com/v1',
+    imageBaseUrl: process.env.NVIDIA_IMAGE_BASE_URL || 'https://ai.api.nvidia.com/v1/genai',
     get hasCredentials() {
       return Boolean(this.apiKey && this.apiKey.startsWith('nvapi-'));
     },
