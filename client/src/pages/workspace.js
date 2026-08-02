@@ -23,19 +23,19 @@ export async function renderWorkspace(container) {
     <div class="animate-fade">
       <div class="flex items-center justify-between" style="margin-bottom:var(--space-lg)">
         <div>
-          <h1 class="page-title">Workspace & Forking</h1>
-          <p class="page-subtitle">Manage conversation forks, model selection, and workspace configuration</p>
+          <h1 class="page-title">Çalışma Alanı & Çatallama</h1>
+          <p class="page-subtitle">Konuşma çatallarını, model seçimini ve çalışma alanı yapılandırmasını yönetin</p>
         </div>
-        <button class="btn btn-primary" id="btn-fork">🔀 Fork Workspace</button>
+        <button class="btn btn-primary" id="btn-fork">🔀 Çalışma Alanını Çatalla</button>
       </div>
 
       <!-- Forking Explanation -->
       <div class="glass-card" style="padding:var(--space-lg);margin-bottom:var(--space-lg)">
-        <h3 class="section-title">Conversation Forking System</h3>
+        <h3 class="section-title">Konuşma Çatallama Sistemi</h3>
         <p class="text-secondary" style="line-height:1.6;margin-bottom:var(--space-md)">
-          Agent OS uses a <strong style="color:var(--cyan)">forking</strong> methodology instead of traditional installation.
-          Each fork creates a new system instance from the current template, allowing isolated environments 
-          for different tools and workflows. Select a model for each fork based on its specialization.
+          Agent OS, klasik kurulum yerine <strong style="color:var(--cyan)">çatallama (forking)</strong> yöntemini kullanır.
+          Her çatal, mevcut şablondan yeni bir sistem örneği oluşturur; böylece farklı araç ve iş akışları için
+          izole ortamlar elde edersiniz. Her çatal için uzmanlığına göre bir model seçin.
         </p>
         <div class="grid grid-4" style="margin-top:var(--space-md)">
           ${models.map(m => `
@@ -52,13 +52,13 @@ export async function renderWorkspace(container) {
       <!-- Active Forks -->
       <div class="glass-card" style="padding:0;overflow:hidden;margin-bottom:var(--space-lg)">
         <div class="flex items-center justify-between" style="padding:var(--space-lg);border-bottom:1px solid var(--glass-border)">
-          <h3 class="section-title" style="margin:0">Active Forks</h3>
-          <span class="text-sm text-muted">${forks.length} forks</span>
+          <h3 class="section-title" style="margin:0">Aktif Çatallar</h3>
+          <span class="text-sm text-muted">${forks.length} çatal</span>
         </div>
         ${forks.length > 0 ? `
           <div class="table-container" style="border:none;border-radius:0">
             <table>
-              <thead><tr><th>Name</th><th>Model</th><th>Description</th><th>Created</th><th>Status</th></tr></thead>
+              <thead><tr><th>Ad</th><th>Model</th><th>Açıklama</th><th>Oluşturulma</th><th>Durum</th></tr></thead>
               <tbody>
                 ${forks.map(f => `
                   <tr>
@@ -75,7 +75,7 @@ export async function renderWorkspace(container) {
         ` : `
           <div class="empty-state">
             <div class="icon">🔀</div>
-            <p>No forks created yet. Fork your workspace to create isolated agent environments.</p>
+            <p>Henüz çatal oluşturulmadı. İzole ajan ortamları için çalışma alanınızı çatallayın.</p>
           </div>
         `}
       </div>
@@ -83,8 +83,8 @@ export async function renderWorkspace(container) {
       <!-- Workspace Config -->
       <div class="glass-card" style="padding:var(--space-lg)">
         <div class="flex items-center justify-between" style="margin-bottom:var(--space-md)">
-          <h3 class="section-title" style="margin:0">Workspace Configuration</h3>
-          <button class="btn btn-sm" id="btn-add-config">+ Add Key</button>
+          <h3 class="section-title" style="margin:0">Çalışma Alanı Yapılandırması</h3>
+          <button class="btn btn-sm" id="btn-add-config">+ Anahtar Ekle</button>
         </div>
         <div id="config-entries">
           ${Object.keys(config).length > 0 ? Object.entries(config).filter(([k]) => !k.startsWith('fork:')).map(([key, value]) => `
@@ -94,7 +94,7 @@ export async function renderWorkspace(container) {
                 <div class="settings-hint">${escapeHtml(typeof value === 'string' && value.length > 60 ? value.slice(0, 60) + '...' : value)}</div>
               </div>
             </div>
-          `).join('') : '<p class="text-muted text-sm">No custom configuration set</p>'}
+          `).join('') : '<p class="text-muted text-sm">Özel yapılandırma tanımlanmamış</p>'}
         </div>
       </div>
     </div>
@@ -104,24 +104,24 @@ export async function renderWorkspace(container) {
   container.querySelector('#btn-fork')?.addEventListener('click', async () => {
     const modelOptions = models.map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(m.name)} — ${escapeHtml(m.role)}</option>`).join('');
     const result = await showModal({
-      title: '🔀 Fork Workspace',
+      title: '🔀 Çalışma Alanını Çatalla',
       content: `
         <div class="form-group">
-          <label class="form-label">Fork Name</label>
-          <input class="input" id="fork-name" placeholder="e.g. Boat Manufacturing CRM" />
+          <label class="form-label">Çatal Adı</label>
+          <input class="input" id="fork-name" placeholder="örn. Tekne Üretimi CRM" />
         </div>
         <div class="form-group">
-          <label class="form-label">Base Model</label>
+          <label class="form-label">Temel Model</label>
           <select class="select" id="fork-model">${modelOptions}</select>
         </div>
         <div class="form-group">
-          <label class="form-label">Description</label>
-          <textarea class="textarea" id="fork-desc" placeholder="What will this fork be used for?"></textarea>
+          <label class="form-label">Açıklama</label>
+          <textarea class="textarea" id="fork-desc" placeholder="Bu çatal ne için kullanılacak?"></textarea>
         </div>
       `,
       actions: [
-        { label: 'Cancel', value: null },
-        { label: 'Create Fork', class: 'btn-primary', value: 'fork' },
+        { label: 'İptal', value: null },
+        { label: 'Çatal Oluştur', class: 'btn-primary', value: 'fork' },
       ],
     });
 
@@ -129,10 +129,10 @@ export async function renderWorkspace(container) {
       const name = document.getElementById('fork-name')?.value;
       const model = document.getElementById('fork-model')?.value;
       const description = document.getElementById('fork-desc')?.value;
-      if (!name) return showToast('Fork name is required', 'error');
+      if (!name) return showToast('Çatal adı zorunlu', 'error');
       try {
         await api.forkWorkspace({ name, model, description });
-        showToast(`Workspace forked: "${name}"`, 'success');
+        showToast(`Çalışma alanı çatallandı: "${name}"`, 'success');
         renderWorkspace(container);
       } catch (e) {
         showToast(e.message, 'error');
@@ -142,12 +142,12 @@ export async function renderWorkspace(container) {
 
   // Add config key
   container.querySelector('#btn-add-config')?.addEventListener('click', async () => {
-    const key = prompt('Configuration key:');
+    const key = prompt('Yapılandırma anahtarı:');
     if (!key) return;
-    const value = prompt('Value:');
+    const value = prompt('Değer:');
     try {
       await api.setWorkspaceConfig(key, value || '');
-      showToast('Configuration saved', 'success');
+      showToast('Yapılandırma kaydedildi', 'success');
       renderWorkspace(container);
     } catch (e) {
       showToast(e.message, 'error');

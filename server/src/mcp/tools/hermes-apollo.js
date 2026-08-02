@@ -1,6 +1,6 @@
 export const hermesApolloTool = {
   name: 'hermes_apollo',
-  description: 'Advanced voice assistant — processes voice commands and generates audio responses',
+  description: 'Gelişmiş sesli asistan — sesli komutları işler ve sesli yanıt üretir',
   category: 'interaction',
   inputSchema: {
     type: 'object',

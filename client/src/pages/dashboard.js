@@ -24,12 +24,12 @@ export async function renderDashboard(container) {
     <div class="animate-fade">
       <div class="flex items-center justify-between" style="margin-bottom:var(--space-lg)">
         <div>
-          <h1 class="page-title">Command Center</h1>
-          <p class="page-subtitle">Agent OS operational overview — all systems monitored in real-time</p>
+          <h1 class="page-title">Komuta Merkezi</h1>
+          <p class="page-subtitle">Agent OS operasyonel özeti — tüm sistemler gerçek zamanlı izleniyor</p>
         </div>
         <div class="flex gap-sm">
           <button class="btn btn-primary" id="btn-new-agent">
-            <span>+</span> New Agent
+            <span>+</span> Yeni Ajan
           </button>
         </div>
       </div>
@@ -38,42 +38,42 @@ export async function renderDashboard(container) {
       <div class="grid grid-4 stagger" style="margin-bottom:var(--space-xl)">
         <div class="glass-card metric-card">
           <div class="metric-card-header">
-            <span class="metric-card-label">Active Agents</span>
+            <span class="metric-card-label">Aktif Ajanlar</span>
             <span class="metric-card-icon">🤖</span>
           </div>
           <div class="metric-card-value text-cyan" id="metric-active">${data.agents.activeAgents}</div>
           <div class="metric-card-trend neutral">
-            <span>${data.agents.totalAgents} total registered</span>
+            <span>toplam ${data.agents.totalAgents} kayıtlı</span>
           </div>
         </div>
         <div class="glass-card metric-card">
           <div class="metric-card-header">
-            <span class="metric-card-label">Running Tasks</span>
+            <span class="metric-card-label">Çalışan Görevler</span>
             <span class="metric-card-icon">⚡</span>
           </div>
           <div class="metric-card-value text-green" id="metric-tasks">${data.agents.runningTasks}</div>
           <div class="metric-card-trend neutral">
-            <span>${data.agents.completedTasks} completed total</span>
+            <span>toplam ${data.agents.completedTasks} tamamlandı</span>
           </div>
         </div>
         <div class="glass-card metric-card">
           <div class="metric-card-header">
-            <span class="metric-card-label">SEO Rank Avg</span>
+            <span class="metric-card-label">Ortalama SEO Sırası</span>
             <span class="metric-card-icon">📈</span>
           </div>
           <div class="metric-card-value text-orange" id="metric-seo">${data.seo.averageRank ?? '—'}</div>
           <div class="metric-card-trend neutral">
-            <span>${data.seo.totalKeywords} keywords tracked</span>
+            <span>${data.seo.totalKeywords} kelime takipte</span>
           </div>
         </div>
         <div class="glass-card metric-card">
           <div class="metric-card-header">
-            <span class="metric-card-label">System Uptime</span>
+            <span class="metric-card-label">Çalışma Süresi</span>
             <span class="metric-card-icon">🕐</span>
           </div>
           <div class="metric-card-value text-purple" id="metric-uptime">${uptime}</div>
           <div class="metric-card-trend neutral">
-            <span>${data.mcpTools} MCP tools loaded</span>
+            <span>${data.mcpTools} MCP aracı yüklü</span>
           </div>
         </div>
       </div>
@@ -82,8 +82,8 @@ export async function renderDashboard(container) {
         <!-- Agent Status Grid -->
         <div class="glass-card" style="padding:0;overflow:hidden">
           <div class="flex items-center justify-between" style="padding:var(--space-lg);border-bottom:1px solid var(--glass-border)">
-            <h3 class="section-title" style="margin:0">Agent Fleet</h3>
-            <button class="btn btn-sm" onclick="location.hash='#/agents'">View All →</button>
+            <h3 class="section-title" style="margin:0">Ajan Filosu</h3>
+            <button class="btn btn-sm" onclick="location.hash='#/agents'">Tümünü Gör →</button>
           </div>
           <div id="agent-fleet-list">
             ${await renderAgentFleet()}
@@ -93,8 +93,8 @@ export async function renderDashboard(container) {
         <!-- Activity Feed -->
         <div class="glass-card" style="padding:0;overflow:hidden">
           <div class="flex items-center justify-between" style="padding:var(--space-lg);border-bottom:1px solid var(--glass-border)">
-            <h3 class="section-title" style="margin:0">Recent Activity</h3>
-            <span class="text-sm text-muted">Live feed</span>
+            <h3 class="section-title" style="margin:0">Son Aktiviteler</h3>
+            <span class="text-sm text-muted">Canlı akış</span>
           </div>
           <div class="activity-feed" id="activity-feed" style="max-height:360px;overflow-y:auto">
             ${renderActivityItems(data.activity)}
@@ -104,7 +104,7 @@ export async function renderDashboard(container) {
 
       <!-- MCP Tools Overview -->
       <div class="glass-card" style="margin-top:var(--space-lg);padding:var(--space-lg)">
-        <h3 class="section-title">MCP Tool Registry</h3>
+        <h3 class="section-title">MCP Araç Kaydı</h3>
         <div class="grid grid-auto" id="mcp-tools-grid">
           ${await renderMcpTools()}
         </div>
@@ -129,7 +129,7 @@ async function renderAgentFleet() {
   try {
     const res = await api.getAgents();
     const agents = res.data;
-    if (!agents.length) return '<div class="empty-state"><p>No agents registered</p></div>';
+    if (!agents.length) return '<div class="empty-state"><p>Kayıtlı ajan yok</p></div>';
 
     return agents.map(a => {
       const config = tryParse(a.config);
@@ -145,13 +145,13 @@ async function renderAgentFleet() {
       `;
     }).join('');
   } catch {
-    return '<div class="empty-state"><p>Failed to load agents</p></div>';
+    return '<div class="empty-state"><p>Ajanlar yüklenemedi</p></div>';
   }
 }
 
 function renderActivityItems(activities) {
   if (!activities || !activities.length) {
-    return '<div class="empty-state" style="padding:var(--space-xl)"><p class="text-muted">No recent activity</p></div>';
+    return '<div class="empty-state" style="padding:var(--space-xl)"><p class="text-muted">Henüz aktivite yok</p></div>';
   }
   return activities.map(a => `
     <div class="activity-item">
@@ -176,12 +176,12 @@ async function renderMcpTools() {
         </div>
         <p class="text-sm text-secondary" style="line-height:1.4">${escapeHtml(t.description.slice(0, 80))}...</p>
         <div style="margin-top:var(--space-sm)">
-          <span class="badge badge-working">Simulation</span>
+          <span class="badge badge-working">Simülasyon</span>
         </div>
       </div>
     `).join('');
   } catch {
-    return '<p class="text-muted">Failed to load MCP tools</p>';
+    return '<p class="text-muted">MCP araçları yüklenemedi</p>';
   }
 }
 
@@ -200,9 +200,9 @@ function tryParse(json) {
 }
 
 function formatUptime(seconds) {
-  if (!seconds) return '0s';
+  if (!seconds) return '0 dk';
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
-  if (h > 0) return `${h}h ${m}m`;
-  return `${m}m`;
+  if (h > 0) return `${h} sa ${m} dk`;
+  return `${m} dk`;
 }

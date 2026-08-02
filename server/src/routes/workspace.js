@@ -65,10 +65,10 @@ router.get('/models', (req, res) => {
   res.json({
     success: true,
     data: [
-      { id: 'claude', name: 'Claude', role: 'System setup & operational management', status: 'available' },
-      { id: 'hermes', name: 'Hermes', role: 'Autonomous task management & competitor analysis', status: 'available' },
-      { id: 'fable5', name: 'Fable 5', role: 'Architectural planning & strategic configuration', status: 'available' },
-      { id: 'gpt56soul', name: 'GPT 5.6 Soul', role: 'Complex tasks & highest-performance processing', status: 'available' },
+      { id: 'claude', name: 'Claude', role: 'Sistem kurulumu ve operasyonel yönetim', status: 'kullanılabilir' },
+      { id: 'hermes', name: 'Hermes', role: 'Otonom görev yönetimi ve rakip analizi', status: 'kullanılabilir' },
+      { id: 'fable5', name: 'Fable 5', role: 'Mimari planlama ve stratejik yapılandırma', status: 'kullanılabilir' },
+      { id: 'gpt56soul', name: 'GPT 5.6 Soul', role: 'Karmaşık görevler ve en yüksek performanslı işleme', status: 'kullanılabilir' },
     ],
   });
 });

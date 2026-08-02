@@ -20,13 +20,13 @@ export async function renderAgents(container) {
     <div class="animate-fade">
       <div class="flex items-center justify-between" style="margin-bottom:var(--space-lg)">
         <div>
-          <h1 class="page-title">Agent Management</h1>
-          <p class="page-subtitle">${agents.length} agents registered · Manage your AI workforce</p>
+          <h1 class="page-title">Ajan Yönetimi</h1>
+          <p class="page-subtitle">${agents.length} ajan kayıtlı · Yapay zekâ ekibinizi yönetin</p>
         </div>
         <div class="flex gap-sm">
-          <button class="btn" id="btn-start-all">▶ Start All</button>
-          <button class="btn" id="btn-stop-all">⏹ Stop All</button>
-          <button class="btn btn-primary" id="btn-create-agent">+ Create Agent</button>
+          <button class="btn" id="btn-start-all">▶ Tümünü Başlat</button>
+          <button class="btn" id="btn-stop-all">⏹ Tümünü Durdur</button>
+          <button class="btn btn-primary" id="btn-create-agent">+ Ajan Oluştur</button>
         </div>
       </div>
 
@@ -37,7 +37,7 @@ export async function renderAgents(container) {
       ${agents.length === 0 ? `
         <div class="empty-state">
           <div class="icon">🤖</div>
-          <p>No agents found. Create your first agent to get started.</p>
+          <p>Henüz ajan yok. Başlamak için ilk ajanınızı oluşturun.</p>
         </div>
       ` : ''}
     </div>
@@ -47,24 +47,24 @@ export async function renderAgents(container) {
   container.querySelector('#btn-create-agent')?.addEventListener('click', async () => {
     const typeOptions = agentTypes.map(t => `<option value="${escapeHtml(t.id)}">${t.icon} ${escapeHtml(t.name)}</option>`).join('');
     const result = await showModal({
-      title: 'Create New Agent',
+      title: 'Yeni Ajan Oluştur',
       content: `
         <div class="form-group">
-          <label class="form-label">Agent Name</label>
-          <input class="input" id="modal-name" placeholder="e.g. My SEO Bot" />
+          <label class="form-label">Ajan Adı</label>
+          <input class="input" id="modal-name" placeholder="örn. SEO Botum" />
         </div>
         <div class="form-group">
-          <label class="form-label">Agent Type</label>
+          <label class="form-label">Ajan Tipi</label>
           <select class="select" id="modal-type">${typeOptions}</select>
         </div>
         <div class="form-group">
-          <label class="form-label">Description (optional)</label>
-          <textarea class="textarea" id="modal-desc" placeholder="What should this agent do?"></textarea>
+          <label class="form-label">Açıklama (isteğe bağlı)</label>
+          <textarea class="textarea" id="modal-desc" placeholder="Bu ajan ne yapsın?"></textarea>
         </div>
       `,
       actions: [
-        { label: 'Cancel', class: '', value: null },
-        { label: 'Create Agent', class: 'btn-primary', value: 'create' },
+        { label: 'İptal', class: '', value: null },
+        { label: 'Ajan Oluştur', class: 'btn-primary', value: 'create' },
       ],
     });
 
@@ -72,10 +72,10 @@ export async function renderAgents(container) {
       const name = document.getElementById('modal-name')?.value;
       const type = document.getElementById('modal-type')?.value;
       const description = document.getElementById('modal-desc')?.value;
-      if (!name) return showToast('Name is required', 'error');
+      if (!name) return showToast('Ajan adı zorunlu', 'error');
       try {
         await api.createAgent({ name, type, description });
-        showToast(`Agent "${name}" created!`, 'success');
+        showToast(`"${name}" ajanı oluşturuldu`, 'success');
         renderAgents(container);
       } catch (e) {
         showToast(e.message, 'error');
@@ -88,7 +88,7 @@ export async function renderAgents(container) {
     for (const a of agents.filter(a => a.status === 'idle')) {
       try { await api.startAgent(a.id); } catch {}
     }
-    showToast('All idle agents started', 'success');
+    showToast('Boştaki tüm ajanlar başlatıldı', 'success');
     renderAgents(container);
   });
 
@@ -96,7 +96,7 @@ export async function renderAgents(container) {
     for (const a of agents.filter(a => a.status !== 'idle')) {
       try { await api.stopAgent(a.id); } catch {}
     }
-    showToast('All agents stopped', 'info');
+    showToast('Tüm ajanlar durduruldu', 'info');
     renderAgents(container);
   });
 
@@ -111,13 +111,13 @@ export async function renderAgents(container) {
         else if (agentAction === 'pause') await api.pauseAgent(agentId);
         else if (agentAction === 'delete') {
           const confirmed = await showModal({
-            title: 'Delete Agent',
-            content: '<p>Are you sure you want to delete this agent? This action cannot be undone.</p>',
-            actions: [{ label: 'Cancel', value: null }, { label: 'Delete', class: 'btn-danger', value: 'del' }],
+            title: 'Ajanı Sil',
+            content: '<p>Bu ajanı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.</p>',
+            actions: [{ label: 'İptal', value: null }, { label: 'Sil', class: 'btn-danger', value: 'del' }],
           });
           if (confirmed !== 'del') return;
           await api.deleteAgent(agentId);
-          showToast('Agent deleted', 'info');
+          showToast('Ajan silindi', 'info');
         }
         renderAgents(container);
       } catch (e) {
@@ -157,16 +157,16 @@ function renderAgentCard(agent) {
         </div>
         <div class="agent-card-icon">${icon}</div>
       </div>
-      <p class="agent-card-desc">${escapeHtml(agent.description) || 'No description'}</p>
+      <p class="agent-card-desc">${escapeHtml(agent.description) || 'Açıklama yok'}</p>
       <div class="agent-card-footer">
         ${statusBadge(agent.status)}
         <div class="agent-card-actions">
           ${isActive
-            ? `<button class="btn btn-sm" data-agent-id="${id}" data-agent-action="stop" title="Stop">⏹</button>
-               <button class="btn btn-sm" data-agent-id="${id}" data-agent-action="pause" title="Pause">⏸</button>`
-            : `<button class="btn btn-sm btn-success" data-agent-id="${id}" data-agent-action="start" title="Start">▶</button>`
+            ? `<button class="btn btn-sm" data-agent-id="${id}" data-agent-action="stop" title="Durdur">⏹</button>
+               <button class="btn btn-sm" data-agent-id="${id}" data-agent-action="pause" title="Duraklat">⏸</button>`
+            : `<button class="btn btn-sm btn-success" data-agent-id="${id}" data-agent-action="start" title="Başlat">▶</button>`
           }
-          <button class="btn btn-sm btn-danger" data-agent-id="${id}" data-agent-action="delete" title="Delete">🗑</button>
+          <button class="btn btn-sm btn-danger" data-agent-id="${id}" data-agent-action="delete" title="Sil">🗑</button>
         </div>
       </div>
     </div>

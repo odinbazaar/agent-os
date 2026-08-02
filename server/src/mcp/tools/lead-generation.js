@@ -1,6 +1,6 @@
 export const leadGenerationTool = {
   name: 'lead_generation',
-  description: 'Automated potential customer detection and listing via API integrations',
+  description: 'API entegrasyonlarıyla otomatik potansiyel müşteri tespiti ve listeleme',
   category: 'growth',
   inputSchema: {
     type: 'object',

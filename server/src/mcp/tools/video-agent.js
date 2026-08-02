@@ -1,6 +1,6 @@
 export const videoAgentTool = {
   name: 'video_agent',
-  description: 'Video content production — script generation, editing workflow, max 10min duration. Higsfield optimized for short-form.',
+  description: 'Video içerik üretimi — senaryo oluşturma, kurgu akışı, en fazla 10 dk. Kısa form için Higsfield optimize.',
   category: 'content',
   inputSchema: {
     type: 'object',

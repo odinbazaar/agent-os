@@ -94,15 +94,15 @@ export function showModal({ title, content, actions = [] }) {
 // ── Status Badge ──
 
 const statusMap = {
-  idle: { label: 'Idle', class: 'badge-idle', pulse: false },
-  active: { label: 'Active', class: 'badge-active', pulse: true },
-  working: { label: 'Working', class: 'badge-working', pulse: true },
-  paused: { label: 'Paused', class: 'badge-paused', pulse: false },
-  error: { label: 'Error', class: 'badge-error', pulse: true },
-  review: { label: 'Review', class: 'badge-review', pulse: true },
-  pending: { label: 'Pending', class: 'badge-idle', pulse: false },
-  running: { label: 'Running', class: 'badge-working', pulse: true },
-  completed: { label: 'Done', class: 'badge-active', pulse: false },
+  idle: { label: 'Boşta', class: 'badge-idle', pulse: false },
+  active: { label: 'Aktif', class: 'badge-active', pulse: true },
+  working: { label: 'Çalışıyor', class: 'badge-working', pulse: true },
+  paused: { label: 'Duraklatıldı', class: 'badge-paused', pulse: false },
+  error: { label: 'Hata', class: 'badge-error', pulse: true },
+  review: { label: 'İnceleme', class: 'badge-review', pulse: true },
+  pending: { label: 'Bekliyor', class: 'badge-idle', pulse: false },
+  running: { label: 'Çalışıyor', class: 'badge-working', pulse: true },
+  completed: { label: 'Tamamlandı', class: 'badge-active', pulse: false },
 };
 
 export function statusBadge(status) {
@@ -118,8 +118,8 @@ export function timeAgo(dateStr) {
   const past = new Date(dateStr);
   const seconds = Math.floor((now - past) / 1000);
 
-  if (seconds < 60) return 'just now';
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  return `${Math.floor(seconds / 86400)}d ago`;
+  if (seconds < 60) return 'az önce';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)} dk önce`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)} sa önce`;
+  return `${Math.floor(seconds / 86400)} gün önce`;
 }

@@ -1,6 +1,6 @@
 export const delegateTool = {
   name: 'delegate_task',
-  description: 'Decompose complex tasks and automatically delegate to sub-agents for parallel execution',
+  description: 'Karmaşık görevleri parçalara ayırır ve paralel çalıştırma için alt ajanlara dağıtır',
   category: 'orchestration',
   inputSchema: {
     type: 'object',

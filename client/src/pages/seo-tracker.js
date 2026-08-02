@@ -17,21 +17,21 @@ export async function renderSeoTracker(container) {
     <div class="animate-fade">
       <div class="flex items-center justify-between" style="margin-bottom:var(--space-lg)">
         <div>
-          <h1 class="page-title">SEO Rank Tracker</h1>
-          <p class="page-subtitle">DataForSEO integration · Track your search visibility</p>
+          <h1 class="page-title">SEO Sıra Takibi</h1>
+          <p class="page-subtitle">DataForSEO entegrasyonu · Arama görünürlüğünüzü izleyin</p>
         </div>
         <div class="flex gap-sm">
-          <button class="btn" id="btn-check-all">🔄 Check All Ranks</button>
-          <button class="btn btn-primary" id="btn-add-keyword">+ Add Keyword</button>
+          <button class="btn" id="btn-check-all">🔄 Tüm Sıraları Kontrol Et</button>
+          <button class="btn btn-primary" id="btn-add-keyword">+ Kelime Ekle</button>
         </div>
       </div>
 
       <!-- API Status -->
       <div class="seo-status-bar">
         <span class="seo-status-dot ${summary.hasCredentials ? 'live' : 'mock'}"></span>
-        <span class="text-sm" style="font-weight:500">${summary.hasCredentials ? 'DataForSEO Connected' : 'Demo Mode (Mock Data)'}</span>
+        <span class="text-sm" style="font-weight:500">${summary.hasCredentials ? 'DataForSEO Bağlı' : 'Demo Modu (Örnek Veri)'}</span>
         <span class="text-sm text-muted" style="margin-left:auto">
-          ${!summary.hasCredentials ? 'Add credentials to .env for live data' : 'Live API connected'}
+          ${!summary.hasCredentials ? 'Canlı veri için .env dosyasına kimlik bilgisi ekleyin' : 'Canlı API bağlantısı aktif'}
         </span>
       </div>
 
@@ -39,28 +39,28 @@ export async function renderSeoTracker(container) {
       <div class="grid grid-4 stagger" style="margin-bottom:var(--space-lg)">
         <div class="glass-card metric-card">
           <div class="metric-card-header">
-            <span class="metric-card-label">Keywords Tracked</span>
+            <span class="metric-card-label">Takip Edilen Kelime</span>
             <span class="metric-card-icon">🔑</span>
           </div>
           <div class="metric-card-value text-cyan">${summary.totalKeywords || 0}</div>
         </div>
         <div class="glass-card metric-card">
           <div class="metric-card-header">
-            <span class="metric-card-label">Average Rank</span>
+            <span class="metric-card-label">Ortalama Sıra</span>
             <span class="metric-card-icon">📊</span>
           </div>
           <div class="metric-card-value text-orange">${summary.averageRank ?? '—'}</div>
         </div>
         <div class="glass-card metric-card">
           <div class="metric-card-header">
-            <span class="metric-card-label">Top 10 Keywords</span>
+            <span class="metric-card-label">İlk 10'daki Kelime</span>
             <span class="metric-card-icon">🏆</span>
           </div>
           <div class="metric-card-value text-green">${summary.top10Count || 0}</div>
         </div>
         <div class="glass-card metric-card">
           <div class="metric-card-header">
-            <span class="metric-card-label">Top 30 Keywords</span>
+            <span class="metric-card-label">İlk 30'daki Kelime</span>
             <span class="metric-card-icon">📈</span>
           </div>
           <div class="metric-card-value text-purple">${summary.top30Count || 0}</div>
@@ -70,20 +70,20 @@ export async function renderSeoTracker(container) {
       <!-- Keywords Table -->
       <div class="glass-card" style="padding:0;overflow:hidden">
         <div class="flex items-center justify-between" style="padding:var(--space-lg);border-bottom:1px solid var(--glass-border)">
-          <h3 class="section-title" style="margin:0">Tracked Keywords</h3>
-          <span class="text-sm text-muted">${keywords.length} keywords</span>
+          <h3 class="section-title" style="margin:0">Takip Edilen Kelimeler</h3>
+          <span class="text-sm text-muted">${keywords.length} kelime</span>
         </div>
         ${keywords.length > 0 ? `
           <div class="table-container" style="border:none;border-radius:0">
             <table>
               <thead>
                 <tr>
-                  <th>Keyword</th>
-                  <th>Rank</th>
+                  <th>Kelime</th>
+                  <th>Sıra</th>
                   <th>URL</th>
-                  <th>Device</th>
-                  <th>Last Checked</th>
-                  <th>Actions</th>
+                  <th>Cihaz</th>
+                  <th>Son Kontrol</th>
+                  <th>İşlemler</th>
                 </tr>
               </thead>
               <tbody>
@@ -97,11 +97,11 @@ export async function renderSeoTracker(container) {
                     </td>
                     <td class="text-sm text-muted" style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${escapeHtml(kw.last_url) || '—'}</td>
                     <td><span class="badge badge-idle">${escapeHtml(kw.device)}</span></td>
-                    <td class="text-sm text-muted">${escapeHtml(kw.last_checked) || 'Never'}</td>
+                    <td class="text-sm text-muted">${escapeHtml(kw.last_checked) || 'Hiç'}</td>
                     <td>
                       <div class="flex gap-xs">
-                        <button class="btn btn-sm" data-check-kw="${escapeHtml(kw.id)}" title="Check rank">🔍</button>
-                        <button class="btn btn-sm btn-danger" data-delete-kw="${escapeHtml(kw.id)}" title="Delete">🗑</button>
+                        <button class="btn btn-sm" data-check-kw="${escapeHtml(kw.id)}" title="Sırayı kontrol et">🔍</button>
+                        <button class="btn btn-sm btn-danger" data-delete-kw="${escapeHtml(kw.id)}" title="Sil">🗑</button>
                       </div>
                     </td>
                   </tr>
@@ -112,7 +112,7 @@ export async function renderSeoTracker(container) {
         ` : `
           <div class="empty-state">
             <div class="icon">🔑</div>
-            <p>No keywords tracked yet. Add your first keyword to start monitoring.</p>
+            <p>Henüz takip edilen kelime yok. İzlemeye başlamak için ilk kelimenizi ekleyin.</p>
           </div>
         `}
       </div>
@@ -121,11 +121,11 @@ export async function renderSeoTracker(container) {
 
   // Add keyword
   container.querySelector('#btn-add-keyword')?.addEventListener('click', async () => {
-    const keyword = prompt('Enter keyword to track:');
+    const keyword = prompt('Takip edilecek kelimeyi girin:');
     if (!keyword) return;
     try {
       await api.addSeoKeyword({ keyword });
-      showToast(`Keyword "${keyword}" added`, 'success');
+      showToast(`"${keyword}" kelimesi eklendi`, 'success');
       renderSeoTracker(container);
     } catch (e) {
       showToast(e.message, 'error');
@@ -134,10 +134,10 @@ export async function renderSeoTracker(container) {
 
   // Check all
   container.querySelector('#btn-check-all')?.addEventListener('click', async () => {
-    showToast('Checking all keyword ranks...', 'info');
+    showToast('Tüm kelimelerin sırası kontrol ediliyor...', 'info');
     try {
       await api.checkAllRanks();
-      showToast('All ranks updated', 'success');
+      showToast('Tüm sıralar güncellendi', 'success');
       renderSeoTracker(container);
     } catch (e) {
       showToast(e.message, 'error');
@@ -150,7 +150,7 @@ export async function renderSeoTracker(container) {
       const id = btn.dataset.checkKw;
       try {
         await api.checkRank(id);
-        showToast('Rank updated', 'success');
+        showToast('Sıra güncellendi', 'success');
         renderSeoTracker(container);
       } catch (e) {
         showToast(e.message, 'error');
@@ -164,7 +164,7 @@ export async function renderSeoTracker(container) {
       const id = btn.dataset.deleteKw;
       try {
         await api.deleteSeoKeyword(id);
-        showToast('Keyword removed', 'info');
+        showToast('Kelime kaldırıldı', 'info');
         renderSeoTracker(container);
       } catch (e) {
         showToast(e.message, 'error');

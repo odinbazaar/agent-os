@@ -30,7 +30,7 @@ export function createTask({ agentId, title, description = '', priority = 'norma
     needs_review: 0,
   });
 
-  addTaskLog(id, 'info', `Task created: ${title}`);
+  addTaskLog(id, 'info', `Görev oluşturuldu: ${title}`);
   broadcast('task:created', { id, agentId, title, status: 'pending' });
 
   return findById('tasks', id);
@@ -42,7 +42,7 @@ export async function executeTask(taskId) {
 
   // Update status to running
   updateRow('tasks', taskId, { status: 'running' });
-  addTaskLog(taskId, 'info', 'Task execution started');
+  addTaskLog(taskId, 'info', 'Görev çalıştırılmaya başlandı');
   broadcast('task:status', { id: taskId, status: 'running' });
 
   if (task.agent_id) {
@@ -54,21 +54,21 @@ export async function executeTask(taskId) {
 
   try {
     // Phase 1: Processing (simulated)
-    addTaskLog(taskId, 'info', 'Phase 1/3: Analyzing input and preparing execution plan...');
+    addTaskLog(taskId, 'info', 'Aşama 1/3: Girdi analiz ediliyor ve çalıştırma planı hazırlanıyor...');
     await delay(1500);
 
     // Phase 2: Execution
-    addTaskLog(taskId, 'info', 'Phase 2/3: Executing primary workload (AI processing 80%)...');
+    addTaskLog(taskId, 'info', 'Aşama 2/3: Ana iş yükü çalıştırılıyor (yapay zekâ işlemi %80)...');
     await delay(2000);
 
     // Phase 3: 80/20 Rule — mark for review
-    addTaskLog(taskId, 'info', 'Phase 3/3: AI processing complete — marking for human review (20%)');
-    
+    addTaskLog(taskId, 'info', 'Aşama 3/3: Yapay zekâ işlemi tamamlandı — insan incelemesi için işaretleniyor (%20)');
+
     const result = {
       completedAt: new Date().toISOString(),
       aiConfidence: 0.87,
-      phases: ['analysis', 'execution', 'review-ready'],
-      output: `Task "${task.title}" processed successfully. AI completed 80% — awaiting human review for final 20%.`,
+      phases: ['analiz', 'çalıştırma', 'incelemeye-hazır'],
+      output: `"${task.title}" görevi başarıyla işlendi. Yapay zekâ %80'ini tamamladı — kalan %20 için insan incelemesi bekleniyor.`,
     };
 
     updateRow('tasks', taskId, {
@@ -78,7 +78,7 @@ export async function executeTask(taskId) {
       completed_at: new Date().toISOString(),
     });
 
-    addTaskLog(taskId, 'success', 'Task completed — needs human review (80/20 rule)');
+    addTaskLog(taskId, 'success', 'Görev tamamlandı — insan incelemesi gerekiyor (80/20 kuralı)');
     broadcast('task:completed', { id: taskId, result });
 
     if (task.agent_id) {
@@ -88,7 +88,7 @@ export async function executeTask(taskId) {
     return findById('tasks', taskId);
   } catch (error) {
     updateRow('tasks', taskId, { status: 'error' });
-    addTaskLog(taskId, 'error', `Task failed: ${error.message}`);
+    addTaskLog(taskId, 'error', `Görev başarısız: ${error.message}`);
     broadcast('task:error', { id: taskId, error: error.message });
 
     if (task.agent_id) {
@@ -106,7 +106,7 @@ export function approveTask(taskId) {
   if (!task) return null;
 
   updateRow('tasks', taskId, { needs_review: 0 });
-  addTaskLog(taskId, 'success', 'Task approved by human reviewer');
+  addTaskLog(taskId, 'success', 'Görev insan denetçi tarafından onaylandı');
   broadcast('task:approved', { id: taskId });
 
   return findById('tasks', taskId);

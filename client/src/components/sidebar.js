@@ -14,41 +14,41 @@ export function renderSidebar() {
       </div>
     </div>
     <nav class="sidebar-nav">
-      <div class="sidebar-section-label">Overview</div>
+      <div class="sidebar-section-label">Genel Bakış</div>
       <a class="nav-item active" data-route="/" id="nav-dashboard">
         <span class="icon">📊</span>
-        <span class="label">Dashboard</span>
+        <span class="label">Kontrol Paneli</span>
       </a>
-      
-      <div class="sidebar-section-label">Management</div>
+
+      <div class="sidebar-section-label">Yönetim</div>
       <a class="nav-item" data-route="/agents" id="nav-agents">
         <span class="icon">🤖</span>
-        <span class="label">Agents</span>
+        <span class="label">Ajanlar</span>
         <span class="nav-badge" id="agent-count" style="display:none">0</span>
       </a>
       <a class="nav-item" data-route="/seo" id="nav-seo">
         <span class="icon">📈</span>
-        <span class="label">SEO Tracker</span>
+        <span class="label">SEO Takip</span>
       </a>
       <a class="nav-item" data-route="/video" id="nav-video">
         <span class="icon">🎬</span>
-        <span class="label">Video Agent</span>
+        <span class="label">Video Ajanı</span>
       </a>
-      
-      <div class="sidebar-section-label">System</div>
+
+      <div class="sidebar-section-label">Sistem</div>
       <a class="nav-item" data-route="/workspace" id="nav-workspace">
         <span class="icon">🔀</span>
-        <span class="label">Workspace</span>
+        <span class="label">Çalışma Alanı</span>
       </a>
       <a class="nav-item" data-route="/settings" id="nav-settings">
         <span class="icon">⚙️</span>
-        <span class="label">Settings</span>
+        <span class="label">Ayarlar</span>
       </a>
     </nav>
     <div class="sidebar-footer">
       <button class="sidebar-toggle" id="sidebar-toggle">
         <span>◀</span>
-        <span class="label">Collapse</span>
+        <span class="label">Daralt</span>
       </button>
     </div>
   `;
@@ -77,17 +77,17 @@ export function renderHeader() {
   header.innerHTML = `
     <div class="header-left">
       <div class="header-breadcrumb">
-        Agent OS / <span>Dashboard</span>
+        Agent OS / <span>Kontrol Paneli</span>
       </div>
     </div>
     <div class="header-right">
       <div class="header-search">
         <span class="search-icon">🔍</span>
-        <input type="text" class="input" placeholder="Search agents, tasks..." id="global-search" />
+        <input type="text" class="input" placeholder="Ajan, görev ara..." id="global-search" />
       </div>
       <div class="ws-indicator disconnected" id="ws-status">
         <span class="dot"></span>
-        <span class="label">Offline</span>
+        <span class="label">Çevrimdışı</span>
       </div>
     </div>
   `;
@@ -97,7 +97,7 @@ export function renderHeader() {
     const indicator = document.getElementById('ws-status');
     if (!indicator) return;
     indicator.className = `ws-indicator ${connected ? 'connected' : 'disconnected'}`;
-    indicator.querySelector('.label').textContent = connected ? 'Live' : 'Offline';
+    indicator.querySelector('.label').textContent = connected ? 'Canlı' : 'Çevrimdışı';
   });
 
   return header;

@@ -28,7 +28,7 @@ export function createAgent({ name, type, description = '', config = {} }) {
     config: JSON.stringify(mergedConfig),
   });
 
-  logActivity('agent', `${name} Created`, `New ${typeInfo.name} agent registered`, id);
+  logActivity('agent', `${name} oluşturuldu`, `Yeni ${typeInfo.name} ajanı kaydedildi`, id);
   broadcast('agent:created', { id, name, type, status: 'idle' });
 
   return findById('agents', id);
@@ -55,7 +55,7 @@ export function deleteAgent(id) {
 
   stopAgent(id);
   deleteRow('agents', id);
-  logActivity('agent', `${agent.name} Deleted`, `Agent removed from system`, null);
+  logActivity('agent', `${agent.name} silindi`, 'Ajan sistemden kaldırıldı', null);
   broadcast('agent:deleted', { id });
   return true;
 }
@@ -71,7 +71,7 @@ export function startAgent(id) {
     errors: 0,
   });
 
-  logActivity('agent', `${agent.name} Started`, 'Agent activated and processing', id);
+  logActivity('agent', `${agent.name} başlatıldı`, 'Ajan etkinleştirildi ve işleme başladı', id);
   broadcast('agent:status', { id, status: 'active' });
   return findById('agents', id);
 }
@@ -83,7 +83,7 @@ export function stopAgent(id) {
   updateRow('agents', id, { status: 'idle' });
   agentRuntimes.delete(id);
 
-  logActivity('agent', `${agent.name} Stopped`, 'Agent deactivated', id);
+  logActivity('agent', `${agent.name} durduruldu`, 'Ajan devre dışı bırakıldı', id);
   broadcast('agent:status', { id, status: 'idle' });
   return findById('agents', id);
 }
@@ -93,7 +93,7 @@ export function pauseAgent(id) {
   if (!agent) return null;
 
   updateRow('agents', id, { status: 'paused' });
-  logActivity('agent', `${agent.name} Paused`, 'Agent paused by user', id);
+  logActivity('agent', `${agent.name} duraklatıldı`, 'Ajan kullanıcı tarafından duraklatıldı', id);
   broadcast('agent:status', { id, status: 'paused' });
   return findById('agents', id);
 }

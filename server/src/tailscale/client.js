@@ -39,7 +39,7 @@ export async function getNetworkStatus() {
       tailnet: 'demo-tailnet',
       connectedDevices: 2,
       totalDevices: 3,
-      securityNote: 'Tailscale enables local file access. Configure ACLs to restrict access.',
+      securityNote: 'Tailscale yerel dosya erişimi sağlar. Erişimi sınırlamak için ACL yapılandırın.',
     };
   }
 

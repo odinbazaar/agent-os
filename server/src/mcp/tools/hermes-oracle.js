@@ -1,6 +1,6 @@
 export const hermesOracleTool = {
   name: 'hermes_oracle',
-  description: 'Competitor tracking, market data analysis, and strategic intelligence monitoring',
+  description: 'Rakip takibi, pazar verisi analizi ve stratejik istihbarat izleme',
   category: 'intelligence',
   inputSchema: {
     type: 'object',

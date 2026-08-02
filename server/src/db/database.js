@@ -27,6 +27,51 @@ function initSchema() {
   const schema = readFileSync(join(__dirname, 'schema.sql'), 'utf-8');
   db.exec(schema);
   seedDefaults();
+  localizeDefaults();
+}
+
+// Default agents, keyed by id. Also used to localize databases that were
+// seeded before the panel was translated.
+const DEFAULT_DESCRIPTIONS = {
+  'agent-apollo-001': 'Gelişmiş sesli asistan ve etkileşimli ses katmanı',
+  'agent-oracle-001': 'Rakip takibi, pazar verisi analizi ve stratejik izleme',
+  'agent-leadgen-001': 'API tabanlı otomatik potansiyel müşteri tespiti ve listeleme',
+  'agent-delegate-001': 'Karmaşık görevlerin alt ajanlara otomatik dağıtımı',
+  'agent-video-001': 'Video içerik üretim akışı yöneticisi (en fazla 10 dk)',
+  'agent-seo-001': 'DataForSEO ile sıra takibi ve SEO raporlama',
+};
+
+const LEGACY_NAMES = {
+  'agent-leadgen-001': ['Lead Generator', 'Müşteri Adayı Üretici'],
+  'agent-delegate-001': ['Delegate Manager', 'Görev Dağıtıcı'],
+  'agent-video-001': ['Video Agent', 'Video Ajanı'],
+  'agent-seo-001': ['SEO Tracker', 'SEO Takipçisi'],
+};
+
+const LEGACY_DESCRIPTIONS = {
+  'agent-apollo-001': 'Advanced voice assistant and interactive audio interaction layer',
+  'agent-oracle-001': 'Competitor tracking, market data analysis, and strategic monitoring',
+  'agent-leadgen-001': 'Automated potential customer detection and listing via APIs',
+  'agent-delegate-001': 'Automatic delegation of complex tasks to sub-agents',
+  'agent-video-001': 'Video content production workflow manager (max 10 min)',
+  'agent-seo-001': 'Rank tracking and SEO reporting via DataForSEO',
+};
+
+// Existing installations were seeded in English. Replace those rows with the
+// Turkish text, but only where the value is still the untouched default — an
+// agent the user renamed or re-described is left alone.
+function localizeDefaults() {
+  const updateDesc = db.prepare('UPDATE agents SET description = ? WHERE id = ? AND description = ?');
+  const updateName = db.prepare('UPDATE agents SET name = ? WHERE id = ? AND name = ?');
+
+  db.transaction(() => {
+    for (const [id, english] of Object.entries(LEGACY_DESCRIPTIONS)) {
+      updateDesc.run(DEFAULT_DESCRIPTIONS[id], id, english);
+    }
+    for (const [id, [english, turkish]] of Object.entries(LEGACY_NAMES)) {
+      updateName.run(turkish, id, english);
+    }
+  })();
 }
 
 function seedDefaults() {
@@ -38,12 +83,12 @@ function seedDefaults() {
     `);
 
     const defaultAgents = [
-      ['agent-apollo-001', 'Hermes Apollo', 'hermes-apollo', 'idle', 'Advanced voice assistant and interactive audio interaction layer', '{"voice":"en-US","speed":1.0}'],
-      ['agent-oracle-001', 'Hermes Oracle', 'hermes-oracle', 'idle', 'Competitor tracking, market data analysis, and strategic monitoring', '{"trackInterval":3600,"maxCompetitors":20}'],
-      ['agent-leadgen-001', 'Lead Generator', 'lead-generation', 'idle', 'Automated potential customer detection and listing via APIs', '{"sources":["linkedin","crunchbase"],"dailyLimit":100}'],
-      ['agent-delegate-001', 'Delegate Manager', 'delegate', 'idle', 'Automatic delegation of complex tasks to sub-agents', '{"maxSubAgents":5,"timeout":300}'],
-      ['agent-video-001', 'Video Agent', 'video-agent', 'idle', 'Video content production workflow manager (max 10 min)', '{"maxDuration":600,"format":"mp4","provider":"higsfield"}'],
-      ['agent-seo-001', 'SEO Tracker', 'seo-tracker', 'idle', 'Rank tracking and SEO reporting via DataForSEO', '{"checkInterval":86400,"engine":"google"}'],
+      ['agent-apollo-001', 'Hermes Apollo', 'hermes-apollo', 'idle', DEFAULT_DESCRIPTIONS['agent-apollo-001'], '{"voice":"tr-TR","speed":1.0}'],
+      ['agent-oracle-001', 'Hermes Oracle', 'hermes-oracle', 'idle', DEFAULT_DESCRIPTIONS['agent-oracle-001'], '{"trackInterval":3600,"maxCompetitors":20}'],
+      ['agent-leadgen-001', 'Müşteri Adayı Üretici', 'lead-generation', 'idle', DEFAULT_DESCRIPTIONS['agent-leadgen-001'], '{"sources":["linkedin","crunchbase"],"dailyLimit":100}'],
+      ['agent-delegate-001', 'Görev Dağıtıcı', 'delegate', 'idle', DEFAULT_DESCRIPTIONS['agent-delegate-001'], '{"maxSubAgents":5,"timeout":300}'],
+      ['agent-video-001', 'Video Ajanı', 'video-agent', 'idle', DEFAULT_DESCRIPTIONS['agent-video-001'], '{"maxDuration":600,"format":"mp4","provider":"higsfield"}'],
+      ['agent-seo-001', 'SEO Takipçisi', 'seo-tracker', 'idle', DEFAULT_DESCRIPTIONS['agent-seo-001'], '{"checkInterval":86400,"engine":"google"}'],
     ];
 
     const insertMany = db.transaction((agents) => {
@@ -55,10 +100,10 @@ function seedDefaults() {
     const actInsert = db.prepare(`
       INSERT INTO activity_log (type, title, detail, agent_id) VALUES (?, ?, ?, ?)
     `);
-    actInsert.run('system', 'Agent OS Initialized', 'System booted with default agent configurations', null);
-    actInsert.run('agent', 'Hermes Apollo Ready', 'Voice assistant agent registered and standing by', 'agent-apollo-001');
-    actInsert.run('agent', 'Hermes Oracle Ready', 'Competitor tracking agent registered', 'agent-oracle-001');
-    actInsert.run('agent', 'Video Agent Ready', 'Video production workflow agent active', 'agent-video-001');
+    actInsert.run('system', 'Agent OS Başlatıldı', 'Sistem varsayılan ajan yapılandırmalarıyla açıldı', null);
+    actInsert.run('agent', 'Hermes Apollo Hazır', 'Sesli asistan ajanı kaydedildi ve beklemede', 'agent-apollo-001');
+    actInsert.run('agent', 'Hermes Oracle Hazır', 'Rakip takip ajanı kaydedildi', 'agent-oracle-001');
+    actInsert.run('agent', 'Video Ajanı Hazır', 'Video üretim akışı ajanı aktif', 'agent-video-001');
   }
 }
 

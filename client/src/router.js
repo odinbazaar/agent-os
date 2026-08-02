@@ -30,12 +30,12 @@ export async function navigate(path) {
   const breadcrumb = document.querySelector('.header-breadcrumb span');
   if (breadcrumb) {
     const names = {
-      '/': 'Dashboard',
-      '/agents': 'Agents',
-      '/seo': 'SEO Tracker',
-      '/video': 'Video Agent',
-      '/workspace': 'Workspace',
-      '/settings': 'Settings',
+      '/': 'Kontrol Paneli',
+      '/agents': 'Ajanlar',
+      '/seo': 'SEO Takip',
+      '/video': 'Video Ajanı',
+      '/workspace': 'Çalışma Alanı',
+      '/settings': 'Ayarlar',
     };
     breadcrumb.textContent = names[path] || path;
   }
@@ -49,7 +49,7 @@ export async function navigate(path) {
         currentCleanup = cleanup;
       }
     } catch (e) {
-      content.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Error loading page: ${e.message}</p></div>`;
+      content.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Sayfa yüklenemedi: ${e.message}</p></div>`;
     }
   }
 }
