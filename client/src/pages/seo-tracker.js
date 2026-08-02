@@ -30,10 +30,27 @@ export async function renderSeoTracker(container) {
       <div class="seo-status-bar">
         <span class="seo-status-dot ${summary.hasCredentials ? 'live' : 'mock'}"></span>
         <span class="text-sm" style="font-weight:500">${summary.hasCredentials ? 'DataForSEO Bağlı' : 'Demo Modu (Örnek Veri)'}</span>
-        <span class="text-sm text-muted" style="margin-left:auto">
-          ${!summary.hasCredentials ? 'Canlı veri için .env dosyasına kimlik bilgisi ekleyin' : 'Canlı API bağlantısı aktif'}
+        <span class="text-sm text-muted" style="margin-left:var(--space-md)">
+          Hedef domain:
+          <strong class="text-mono" style="color:${summary.targetDomain ? 'var(--cyan)' : 'var(--text-muted)'}">
+            ${escapeHtml(summary.targetDomain) || 'tanımsız'}
+          </strong>
         </span>
+        <button class="btn btn-sm" id="btn-set-domain" style="margin-left:auto">Domaini Değiştir</button>
       </div>
+
+      ${summary.hasCredentials && !summary.targetDomain ? `
+        <div class="security-warning" style="margin-bottom:var(--space-lg);background:var(--yellow-dim);border-color:rgba(255,171,0,0.2)">
+          <span class="icon">⚠️</span>
+          <div>
+            <strong style="color:var(--yellow)">Hedef domain tanımlı değil</strong>
+            <p class="text-sm text-secondary" style="margin-top:4px">
+              Sıra kontrolü, arama sonuçlarında hangi sitenin aranacağını bilmiyor. Kendi domaininizi
+              girene kadar canlı kontroller sonuç döndürmez.
+            </p>
+          </div>
+        </div>
+      ` : ''}
 
       <!-- SEO Metrics -->
       <div class="grid grid-4 stagger" style="margin-bottom:var(--space-lg)">
@@ -119,6 +136,19 @@ export async function renderSeoTracker(container) {
     </div>
   `;
 
+  // Target domain
+  container.querySelector('#btn-set-domain')?.addEventListener('click', async () => {
+    const domain = prompt('Sıralamasını takip ettiğiniz domain (örn. sirketiniz.com):', summary.targetDomain || '');
+    if (domain === null) return;
+    try {
+      const res = await api.setSeoTargetDomain(domain);
+      showToast(res.data.targetDomain ? `Hedef domain: ${res.data.targetDomain}` : 'Hedef domain temizlendi', 'success');
+      renderSeoTracker(container);
+    } catch (e) {
+      showToast(e.message, 'error');
+    }
+  });
+
   // Add keyword
   container.querySelector('#btn-add-keyword')?.addEventListener('click', async () => {
     const keyword = prompt('Takip edilecek kelimeyi girin:');
@@ -136,8 +166,14 @@ export async function renderSeoTracker(container) {
   container.querySelector('#btn-check-all')?.addEventListener('click', async () => {
     showToast('Tüm kelimelerin sırası kontrol ediliyor...', 'info');
     try {
-      await api.checkAllRanks();
-      showToast('Tüm sıralar güncellendi', 'success');
+      const res = await api.checkAllRanks();
+      const results = res.data || [];
+      const failed = results.filter(r => r.error).length;
+      const found = results.filter(r => r.rank !== null).length;
+      showToast(
+        failed ? `${results.length} kelime kontrol edildi · ${found} sırada · ${failed} hata` : `${results.length} kelime kontrol edildi · ${found} sırada bulundu`,
+        failed ? 'warning' : 'success'
+      );
       renderSeoTracker(container);
     } catch (e) {
       showToast(e.message, 'error');
@@ -149,8 +185,11 @@ export async function renderSeoTracker(container) {
     btn.addEventListener('click', async () => {
       const id = btn.dataset.checkKw;
       try {
-        await api.checkRank(id);
-        showToast('Sıra güncellendi', 'success');
+        const res = await api.checkRank(id);
+        const r = res.data;
+        if (r.error) showToast(r.error, 'error');
+        else if (r.rank === null) showToast(`"${r.keyword}" ilk ${r.checkedDepth || 100} sonuçta bulunamadı`, 'warning');
+        else showToast(`Sıra güncellendi: ${r.rank}`, 'success');
         renderSeoTracker(container);
       } catch (e) {
         showToast(e.message, 'error');

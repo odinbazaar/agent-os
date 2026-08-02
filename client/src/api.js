@@ -53,6 +53,8 @@ export const api = {
   checkAllRanks: () => request('/seo/check-all', { method: 'POST' }),
   getSeoHistory: (id) => request(`/seo/history/${id}`),
   getSeoSummary: () => request('/seo/summary'),
+  getSeoSettings: () => request('/seo/settings'),
+  setSeoTargetDomain: (targetDomain) => request('/seo/settings', { method: 'POST', body: { targetDomain } }),
 
   // Tailscale
   getTailscaleDevices: () => request('/tailscale/devices'),

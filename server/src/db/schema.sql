@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS seo_keywords (
   location_code INTEGER NOT NULL DEFAULT 2840,
   language_code TEXT NOT NULL DEFAULT 'en',
   device TEXT NOT NULL DEFAULT 'desktop',
+  target_domain TEXT DEFAULT NULL,
   last_rank INTEGER DEFAULT NULL,
   last_url TEXT DEFAULT NULL,
   last_checked TEXT DEFAULT NULL,

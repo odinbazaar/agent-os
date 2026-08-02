@@ -26,8 +26,23 @@ export function getDb() {
 function initSchema() {
   const schema = readFileSync(join(__dirname, 'schema.sql'), 'utf-8');
   db.exec(schema);
+  runMigrations();
   seedDefaults();
   localizeDefaults();
+}
+
+// schema.sql only uses CREATE TABLE IF NOT EXISTS, so columns added later never
+// reach databases that already exist. Add them here instead.
+function runMigrations() {
+  addColumnIfMissing('seo_keywords', 'target_domain', 'TEXT DEFAULT NULL');
+}
+
+function addColumnIfMissing(table, column, definition) {
+  const columns = db.prepare(`PRAGMA table_info(${table})`).all().map(c => c.name);
+  if (!columns.includes(column)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+    console.log(`✓ Migration: ${table}.${column} eklendi`);
+  }
 }
 
 // Default agents, keyed by id. Also used to localize databases that were
