@@ -94,7 +94,9 @@ export function getKeywords() {
   return findAll('seo_keywords', {}, 'created_at DESC', 500);
 }
 
-export function addKeyword({ keyword, locationCode = 2840, languageCode = 'en', device = 'desktop', targetDomain = null }) {
+// DataForSEO konum kodu 2792 = Türkiye. Farklı bir pazar takip edilecekse
+// istek gövdesinde locationCode/languageCode geçilerek değiştirilebilir.
+export function addKeyword({ keyword, locationCode = 2792, languageCode = 'tr', device = 'desktop', targetDomain = null }) {
   const id = `kw-${uuidv4().slice(0, 8)}`;
   insertRow('seo_keywords', {
     id,

@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS task_logs (
 CREATE TABLE IF NOT EXISTS seo_keywords (
   id TEXT PRIMARY KEY,
   keyword TEXT NOT NULL,
-  location_code INTEGER NOT NULL DEFAULT 2840,
-  language_code TEXT NOT NULL DEFAULT 'en',
+  location_code INTEGER NOT NULL DEFAULT 2792,
+  language_code TEXT NOT NULL DEFAULT 'tr',
   device TEXT NOT NULL DEFAULT 'desktop',
   target_domain TEXT DEFAULT NULL,
   last_rank INTEGER DEFAULT NULL,
